@@ -1,0 +1,32 @@
+<div class="container card">
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary ">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Ecommerce</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                <a class="nav-link" href="http://localhost:8080/products">PRODUCTS</a>
+                </li>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">            
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="http://localhost:8080/carts/6658f71308ecdd10b3fcb175">CART</a>
+                    </li>
+                </ul>
+            </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h2>Perfil</h2>
+    <p>Nombre: {{user.first_name}} {{user.last_name}}</p>
+    <p>Email: {{user.email}}</p>
+    <p>Edad: {{user.age}}</p>
+    <p>Rol: {{user.role}}</p>
+    <form action="/api/sessions/logout" method="POST">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+</div>

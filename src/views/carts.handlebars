@@ -1,0 +1,152 @@
+<div class="container">
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary ">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Ecommerce</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="http://localhost:8080/profile">PROFILE</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="http://localhost:8080/products">PRODUCTS</a>
+            </li>
+        </ul>
+        </div>
+    </div>
+    </nav>
+
+   <div class="row justify-content-center p-2 m-2">
+        {{#each cartProducts}}
+        <div class="card">
+            <div class="card-body m-2 p-3 gx-2">
+                <h5 class="card-title">{{product.title}} </h5>
+                <img src="{{product.thumbnail}}" class="card-img-top" alt="Img not found">
+                <div class="row p-3 align-items-center">
+                    <h5> 
+                         Cant: 
+                        <button class="btn btn-primary" onclick="deleteOne('{{product._id}}', {{quantity}})"> - </button>
+                        {{quantity}}  
+                        <button class="btn btn-primary" onclick="addToCart('{{product._id}}')"> + </button>
+                    </h5>
+                </div>
+
+                <button class="deleteProductButton btn btn-danger" data-cartid="{{../cid}}" data-productid="{{product._id}}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    </svg>
+                    Delete product
+                </button>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<script>
+    async function addToCart(pid) {
+        const cid = '6658f71308ecdd10b3fcb175'
+        const url = `http://localhost:8080/api/carts/${cid}/product/${pid}`
+        try {
+            const response = await fetch(url, {
+                method: 'POST'
+            })
+
+            if (response.ok) {
+                location.reload()
+            } else {
+                throw new Error('Error ')
+            }
+        } catch (error) {
+            console.error('Error:', error)
+            alert('Error to add product')
+        }
+    }
+
+    async function deleteOne(pid, quant) {
+        const cid = '6658f71308ecdd10b3fcb175';
+        const url = `http://localhost:8080/api/carts/${cid}/product/${pid}`;
+        const data = { quantity: parseInt(quant)-1 };
+
+        if (!/^[0-9a-fA-F]{24}$/.test(pid)) {
+            console.error('Invalid product ID:', pid);
+            alert('Invalid product ID');
+            return;
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                throw new Error('Error al eliminar el producto');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar el producto');
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(event) {
+            if (event.target.closest('.deleteProductButton')) {
+                var deleteButton = event.target.closest('.deleteProductButton')
+                var cartId = deleteButton.getAttribute('data-cartid')
+                var productId = deleteButton.getAttribute('data-productid')
+
+                console.log('cartId:', cartId) 
+                console.log('productId:', productId)
+
+                if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
+                    fetch(`/api/carts/${cartId}/product/${productId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload()
+                        } else {
+                            console.error('Error al eliminar el producto:', response.statusText)
+                            alert('Error al eliminar el producto')
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al eliminar el producto:', error)
+                        alert('Error al eliminar el producto')
+                    })
+                }
+            }
+        })
+    })
+</script>
+
+<style>
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    .card-img-top {
+    max-width: 200px; 
+    max-height: 200px; 
+    width: auto; 
+    height: auto; 
+    display: block; 
+    margin: 0 auto; 
+    }
+</style>
